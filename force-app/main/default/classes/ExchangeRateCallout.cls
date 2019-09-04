@@ -32,8 +32,10 @@ public with sharing class ExchangeRateCallout {
 		Map < String,
 		Object > resultsMap = (Map < String, Object > ) JSON.deserializeUntyped(res.getBody());
 		system.debug('resultsMap-->' + resultsMap);
+        Map <String, Object> resultsMapRates = (Map<String, Object>)resultsMap.get('rates');
+        System.debug('resultsMapRates--->' + resultsMapRates);
  
-		return resultsMap;
+		return resultsMapRates;
 	
     }
 }
