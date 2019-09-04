@@ -1,4 +1,6 @@
 <aura:component implements="force:appHostable,flexipage:availableForAllPageTypes" controller="ExchangeRateCallout" access="global">
+    <aura:attribute name="response" type="Map"/>
+    <aura:attribute name="ListOfCurrency" type="String[]"/>
     <aura:attribute name="StartDate" type="string" />
     <aura:attribute name="EndDate" type="string" />
     <aura:attribute name="BaseCurrency" type="string" />
@@ -14,7 +16,15 @@
                     <lightning:input aura:id="BaseCurrency" class="slds-size_1-of-2" type="string"
                         label="Base Currency" />
                 </div>
-                <lightning:button label="Get" variant="brand" class="slds-button" onclick="{!c.myAction}" />
+                <lightning:button label="Make Callout" variant="brand" class="slds-button" onclick="{!c.makeCallout}" />
+                <h3 class="slds-section-title--divider"> Base: {!v.response.base} </h3>
+                <h3 class="slds-section-title--divider"> Start Date: {!v.response.start_at} </h3>
+                <h3 class="slds-section-title--divider"> End Date: {!v.response.end_at} </h3>
+                <ul class="slds-list--dotted">
+                    <aura:iteration items="{!v.ListOfCurrency}" var="rateLst">
+                        <li>{!rateLst}</li>
+                    </aura:iteration>
+                </ul>
             </lightning:layoutItem>
         </lightning:layout>
     </div>

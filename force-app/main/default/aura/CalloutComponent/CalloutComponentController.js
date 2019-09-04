@@ -1,36 +1,24 @@
 ({
-    myAction : function(component, event, helper) {
+    makeCallout : function(component, event, helper) {
         
         var startDate = component.find('StartDate').get('v.value');
         var endDate = component.find('EndDate').get('v.value');
         var baseCurrency = component.find('BaseCurrency').get('v.value');
-        var action = component.get("c.RateCallout");
+        var action = component.get("c.getCalloutResponseContents");
         action.setParams({
-            "StartDate": startDate,
-            "EndDate": endDate,
-            "BaseCurrency": baseCurrency
-        })
-        action.setCallback(this, function(Response){
-            var state = Response.getState();
-            if (state === "SUCCESS"){
-                var result = Response.getReturnValue();
-                if (result){
-                    result = JSON.parse(result);
-                    console.log(result);
-                   // Map<String,Map<String,Map<String,Number>>> m =  
-                //    var map = Object.entries(result.rates);
-                //    console.log(map[0][1]);
-                //    console.log(map.values());
-                $A.enqueueAction(action);
+            "url": 'https://api.exchangeratesapi.io/history?start_at=' + startDate + '&end_at=' + endDate + '&base=' + baseCurrency
+        });
+        action.setCallback(this, function(response){
+            var state = response.getState();
+            if (component.isValid() && state == 'SUCCESS') {
+                component.set("v.response", response.getReturnValue());
+                var getAllRates = component.get("v.response")['v.rates'];
+                var CurrencyList = [];
+                for (var key in getAllRates){
+                    CurrencyList.push(key + ' = ' + getAllRates[key]);
                 }
-                
+                component.set("v.ListOfCurrency", CurrencyList);
             }
-            // for (const iterator of map) 
-            //     console.log(iterator [1])
-            })
-        
-        
-        
-    
-
+        });
+        $A.enqueueAction(action);
     }})

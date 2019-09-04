@@ -1,5 +1,5 @@
 ({
-    helperMethod : function() {
-
+    getResponse : function(component, startDate, endDate, baseCurrency ) {
+        
     }
 })
