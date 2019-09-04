@@ -13,17 +13,17 @@ public with sharing class ExchangeRateCallout {
 
     }
 
-    @AuraEnabled
-    public static String getjson(String StartDate, String EndDate) {
-        System.debug(StartDate);
-        System.debug(EndDate);
+    // @AuraEnabled
+    // public static String getjson(String StartDate, String EndDate) {
+    //     System.debug(StartDate);
+    //     System.debug(EndDate);
         
-        String mystring = RateCallout(StartDate, EndDate).getBody();
-        System.debug(mystring);
-        return mystring;
-    }
-
-    public static HttpResponse RateCallout(String StartDate, String EndDate) {
+    //     String mystring = RateCallout(StartDate, EndDate).getBody();
+    //     System.debug(mystring);
+    //     return mystring;
+    // }
+    @AuraEnabled
+    public static void RateCallout(String StartDate, String EndDate, String BaseCurrency) {
         // new ExchangeRate__c list with ID, Date selection
         ExchangeRate__c newExchangeRateList = [SELECT Id, Date__c FROM ExchangeRate__c ORDER BY Date__c DESC LIMIT 1];
         // variable to store start date in it. Why add +1?
@@ -41,7 +41,7 @@ public with sharing class ExchangeRateCallout {
         Map < String, Schema.SObjectField > fieldMap = ExchangeRate__c.getSObjectType().getDescribe().fields.getMap();
         // iteration for each base currency
         for (Integer a = 0; a < i; a++) {
-            String BaseCurrency = listOfBaseCurrencies[a];
+            //String BaseCurrency = listOfBaseCurrencies[a];
             Http Http = new Http();
             HttpRequest request = new HttpRequest();
             request.setEndpoint('https://api.exchangeratesapi.io/history?start_at=' + StartDate + '&end_at=' + EndDate + '&base=' + BaseCurrency + '&symbols=' + getCurrencyFields('ExchangeRate__c'));
@@ -68,6 +68,7 @@ public with sharing class ExchangeRateCallout {
                 }
                 listForDeploy.add(ExRa);
                 System.debug(listForDeploy);
+                
 
             }
 

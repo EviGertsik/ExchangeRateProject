@@ -1,14 +1,14 @@
 ({
     myAction : function(component, event, helper) {
         
-        var startDate = component.find('StartDate').get('v.value');
-        var endDate = component.find('EndDate').get('v.value');
-        var baseCurrency = component.find('BaseCurrency').get('v.value');
-        var action = component.get('c.getjson');
+        var StartDate = component.find('StartDate').get('v.value');
+        var EndDate = component.find('EndDate').get('v.value');
+        var BaseCurrency = component.find('BaseCurrency').get('v.value');
+        var action = component.get('c.RateCallout');
         action.setParams({
-            "StartDate": startDate,
-            "EndDate": endDate,
-            "BaseCurrency": baseCurrency
+            "StartDate": StartDate,
+            "EndDate": EndDate,
+            "BaseCurrency": BaseCurrency
         })
         action.setCallback(this, function(Response){
             var state = Response.getState();
