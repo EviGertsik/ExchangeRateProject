@@ -1,4 +1,4 @@
-# SFDX App
+# Exchange Rate Project
 
 ## Dev, Build and Test
 
