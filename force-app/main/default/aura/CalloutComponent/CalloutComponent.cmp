@@ -1,0 +1,21 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes" controller="ExchangeRateCallout" access="global">
+    <aura:attribute name="StartDate" type="string" />
+    <aura:attribute name="EndDate" type="string" />
+    <aura:attribute name="BaseCurrency" type="string" />
+
+    <div class="c-container slds-theme default" style="align-content: center;">
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem padding="around-small" size="12">
+                <div class="slds-form_horizontal slds-form slds-grid slds-wrap">
+                    <lightning:input aura:id="StartDate" class="slds-size_1-of-2" type="date"
+                        label="Start Date" />
+                    <lightning:input aura:id="EndDate" class="slds-size_1-of-2" type="date"
+                        label="End Date" />
+                    <lightning:input aura:id="BaseCurrency" class="slds-size_1-of-2" type="string"
+                        label="Base Currency" />
+                </div>
+                <lightning:button label="Get" variant="brand" class="slds-button" onclick="{!c.myAction}" />
+            </lightning:layoutItem>
+        </lightning:layout>
+    </div>
+</aura:component>
