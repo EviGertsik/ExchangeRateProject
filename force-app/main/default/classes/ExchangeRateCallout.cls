@@ -23,9 +23,9 @@ public with sharing class ExchangeRateCallout {
     //     return mystring;
     // }
     @AuraEnabled
-    public static void RateCallout(String StartDate, String EndDate, String BaseCurrency) {
+    public static void RateCallout(String StartDate, String EndDate) {
         // new ExchangeRate__c list with ID, Date selection
-        ExchangeRate__c newExchangeRateList = [SELECT Id, Date__c FROM ExchangeRate__c ORDER BY Date__c DESC LIMIT 1];
+        // ExchangeRate__c newExchangeRateList = [SELECT Id, Date__c FROM ExchangeRate__c ORDER BY Date__c DESC LIMIT 1];
         // variable to store start date in it. Why add +1?
         // Date startDateFromList = newExchangeRateList.Date__c + 1;
         // variable to store end date
@@ -41,7 +41,7 @@ public with sharing class ExchangeRateCallout {
         Map < String, Schema.SObjectField > fieldMap = ExchangeRate__c.getSObjectType().getDescribe().fields.getMap();
         // iteration for each base currency
         for (Integer a = 0; a < i; a++) {
-            //String BaseCurrency = listOfBaseCurrencies[a];
+            String BaseCurrency = listOfBaseCurrencies[a];
             Http Http = new Http();
             HttpRequest request = new HttpRequest();
             request.setEndpoint('https://api.exchangeratesapi.io/history?start_at=' + StartDate + '&end_at=' + EndDate + '&base=' + BaseCurrency + '&symbols=' + getCurrencyFields('ExchangeRate__c'));
@@ -54,7 +54,7 @@ public with sharing class ExchangeRateCallout {
             for (String keyDate: mapWithRatesOnly.keySet()) {
                 ExchangeRate__c ExRa = New ExchangeRate__c();
                 ExRa.put(fieldMap.get('Date__c'), Date.valueOf(keyDate));
-                ExRa.put(fieldMap.get('Base_currency__c'), String.valueof(myResult.get('base')));
+                ExRa.put(fieldMap.get('Base_Currency__c'), String.valueof(myResult.get('base')));
                 Map < String, Object > RatesOnly = (Map < String, Object > ) mapWithRatesOnly.get(keyDate);
                 for (string key1: fieldMap.keySet()) {
                     String currencyName = key1.remove('__c');
