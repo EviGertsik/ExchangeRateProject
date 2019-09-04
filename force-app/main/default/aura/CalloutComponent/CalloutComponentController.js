@@ -4,7 +4,7 @@
         var startDate = component.find('StartDate').get('v.value');
         var endDate = component.find('EndDate').get('v.value');
         var baseCurrency = component.find('BaseCurrency').get('v.value');
-        var action = component.get("c.RateCallout");
+        var action = component.get('c.getjson');
         action.setParams({
             "StartDate": startDate,
             "EndDate": endDate,

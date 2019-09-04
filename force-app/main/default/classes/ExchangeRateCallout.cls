@@ -10,10 +10,20 @@ public with sharing class ExchangeRateCallout {
         }
 
         return String.join(fields, ',');
-        
+
     }
 
-    public static Httpresponse RateCallout(String StartDate, String EndDate, String BaseCurrency) {
+    @AuraEnabled
+    public static String getjson(String StartDate, String EndDate) {
+        System.debug(StartDate);
+        System.debug(EndDate);
+        
+        String mystring = RateCallout(StartDate, EndDate).getBody();
+        System.debug(mystring);
+        return mystring;
+    }
+
+    public static HttpResponse RateCallout(String StartDate, String EndDate) {
         // new ExchangeRate__c list with ID, Date selection
         ExchangeRate__c newExchangeRateList = [SELECT Id, Date__c FROM ExchangeRate__c ORDER BY Date__c DESC LIMIT 1];
         // variable to store start date in it. Why add +1?
@@ -22,16 +32,16 @@ public with sharing class ExchangeRateCallout {
         // Date finishDateFromList = Date.today();
         // list, in which I store all picklist values, using "getPickListValuesIntoList" method
         String stringOfBaseCurrencies = getCurrencyFields('ExchangeRate__c');
-        List <String> listOfBaseCurrencies = stringOfBaseCurrencies.split(',');
+        List < String > listOfBaseCurrencies = stringOfBaseCurrencies.split(',');
         // variable to store list size
         Integer i = listOfBaseCurrencies.size();
         // list for ExchangeRate__c records, in which I will store my future records
-        List < ExchangeRate__c > myList1 = new List < ExchangeRate__c > ();
+        List < ExchangeRate__c > listForDeploy = new List < ExchangeRate__c > ();
         // map from my custom object
         Map < String, Schema.SObjectField > fieldMap = ExchangeRate__c.getSObjectType().getDescribe().fields.getMap();
         // iteration for each base currency
         for (Integer a = 0; a < i; a++) {
-           // String baseCurr = listOfBaseCurrencies[a];
+            String BaseCurrency = listOfBaseCurrencies[a];
             Http Http = new Http();
             HttpRequest request = new HttpRequest();
             request.setEndpoint('https://api.exchangeratesapi.io/history?start_at=' + StartDate + '&end_at=' + EndDate + '&base=' + BaseCurrency + '&symbols=' + getCurrencyFields('ExchangeRate__c'));
@@ -56,28 +66,20 @@ public with sharing class ExchangeRateCallout {
                         }
                     }
                 }
-                myList1.add(ExRa);
+                listForDeploy.add(ExRa);
+                System.debug(listForDeploy);
+
             }
 
         }
-        upsert myList1;
+        upsert listForDeploy;
         List < ExchangeRate__c > ListForEuroCheck = new List < ExchangeRate__c > ();
-        for (ExchangeRate__c exc: myList1) {
+        for (ExchangeRate__c exc: listForDeploy) {
             if (exc.eur__c == null) {
                 exc.eur__c = 1;
                 ListForEuroCheck.add(exc);
             }
         }
         upsert ListForEuroCheck;
-    }
-
-    @AuraEnabled
-    public static String getjson(String StartDate, String EndDate, String BaseCurrency) {
-        System.debug(StartDate);
-        System.debug(EndDate);
-        System.debug(BaseCurrency);
-        String mystring = RateCallout(StartDate, EndDate, BaseCurrency).getBody();
-        System.debug(mystring);
-        return mystring;
     }
 }
