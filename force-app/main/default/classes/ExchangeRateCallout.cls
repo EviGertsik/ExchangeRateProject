@@ -22,7 +22,7 @@ public with sharing class ExchangeRateCallout {
     //     System.debug(mystring);
     //     return mystring;
     // }
-    @AuraEnabled
+
     public static void RateCallout(String StartDate, String EndDate) {
         // new ExchangeRate__c list with ID, Date selection
         // ExchangeRate__c newExchangeRateList = [SELECT Id, Date__c FROM ExchangeRate__c ORDER BY Date__c DESC LIMIT 1];
@@ -44,17 +44,21 @@ public with sharing class ExchangeRateCallout {
             String BaseCurrency = listOfBaseCurrencies[a];
             Http Http = new Http();
             HttpRequest request = new HttpRequest();
-            request.setEndpoint('https://api.exchangeratesapi.io/history?start_at=' + StartDate + '&end_at=' + EndDate + '&base=' + BaseCurrency + '&symbols=' + getCurrencyFields('ExchangeRate__c'));
+            request.setEndpoint('https://api.exchangeratesapi.io/history?start_at=' + StartDate + '&end_at=' + EndDate + '&base=' + 'CAD' + '&symbols=' + stringOfBaseCurrencies);
             request.setHeader('Content-type', 'application-json');
             request.setMethod('GET');
             HttpResponse response = Http.send(request);
             String myResponseJsonString = response.getBody();
+            system.debug('myResponseJsonString' + myResponseJsonString);
             Map < String, Object > myResult = (Map < String, Object > ) JSON.deserializeUntyped(myResponseJsonString);
+            system.debug('myResult' + myResult);
             Map < String, Object > mapWithRatesOnly = (Map < String, Object > ) myResult.get('rates');
+            system.debug('mapWithRatesOnly' + mapWithRatesOnly);
             for (String keyDate: mapWithRatesOnly.keySet()) {
                 ExchangeRate__c ExRa = New ExchangeRate__c();
                 ExRa.put(fieldMap.get('Date__c'), Date.valueOf(keyDate));
                 ExRa.put(fieldMap.get('Base_Currency__c'), String.valueof(myResult.get('base')));
+                //map with key-currency name and value - its rate
                 Map < String, Object > RatesOnly = (Map < String, Object > ) mapWithRatesOnly.get(keyDate);
                 for (string key1: fieldMap.keySet()) {
                     String currencyName = key1.remove('__c');
