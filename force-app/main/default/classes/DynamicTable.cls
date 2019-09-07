@@ -54,4 +54,3 @@ public with sharing class DynamicTable {
     }
 }
 
-DynamicTable.fetchExchangeRate('ExchangeRate__c', 'ExchangeRateFieldSet');

@@ -1,0 +1,9 @@
+<aura:component>
+    <aura:attribute name="mydata" type="object"/>
+    <aura:attribute name="mycolumns" type="list"/>
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    <lightning:datatable data="{!v.mydata}"
+        columns="{!v.mycolumns}"
+        keyField="date"
+        onrowselection="{!c.getSelectedName}"/>
+</aura:component>	
