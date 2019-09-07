@@ -1,0 +1,22 @@
+<aura:component>
+        <aura:attribute name="header" type="String" default="ExchangeRate__c"/>
+        <aura:attribute name="colName" type="String"/>
+        <aura:attribute name="isSortUp" type="Boolean" default="false"/>
+        <aura:attribute name="isSortDown" type="Boolean" default="false"/>
+        <aura:attribute name="byDefaultSort" type="Integer" default="0"/>
+        <aura:attribute name="rowData" type="List"/>
+        <aura:attribute name="colData" type="List"/>
+        <aura:attribute name="col_fieldPath" type="String"/>
+
+        <th aria-label="{!c.colName}" aria-sort="none" class="slds-is-sortable slds-is-resizable slds-text-title_caps" scope="col">
+                <a class="slds-th__action slds-text-title_reset" href="javascript:void(0);" role="button" tabindex="-1">
+                    <span class="width_100" title="{!v.colName}" id="{!v.col_fieldPath}" onclick="{!c.sort}">
+                        {!v.colName}
+                    </span>
+                    <div class="{!if(v.byDefaultSort, 'slds-show width_100 sort_icon', 'slds-show width_100 sort_icon')}">
+                        <lightning:icon iconName="{!or(v.isSortDown ? 'utility:arrowdown' : '', v.isSortUp ? 'utility:arrowup' :'')}" size="x-small"/>
+                    </div>
+                </a>
+            </th>
+        
+</aura:component>	
