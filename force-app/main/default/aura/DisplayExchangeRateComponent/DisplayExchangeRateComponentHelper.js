@@ -1,42 +1,30 @@
 ({
-    loadData: function (component, event, helper) {
-        let state, action, ret;
-        action = component.get('c.fetchExchangeRate');
+    getDataHelper : function(component, event) {
+        var action = component.get("c.getAccRecords");
+        //Set the Object parameters and Field Set name
         action.setParams({
-            strObjectName: 'ExchangeRate__c',
-            strFieldsetName: 'ExchangeRateFieldSet'
+            strObjectName : 'ExchangeRate__c',
+            strFieldSetName : 'ExchangeRateFieldSet'
         });
-        action.setCallback(this, function (res) {
-            state = res.getState();
-            if (state === 'SUCCESS') {
-                ret = res.getReturnValue();
-                console.log('ret', ret);
-                this.createHeader(component, ret['listFields']);
-                this.createRows(component, ret['listFields'], ret['listObject'])
+        action.setCallback(this, function(response){
+            var state = response.getState();
+            if(state === 'SUCCESS'){
+                component.set("v.mycolumns", response.getReturnValue().lstDataTableColumns);
+                component.set("v.mydata", response.getReturnValue().lstDataTableData);    
+            }else if (state === 'ERROR'){
+                var errors = response.getError();
+                if (errors) {
+                    if (errors[0] && errors[0].message) {
+                        console.log("Error message: " +
+                                    errors[0].message);
+                    }
+                } else {
+                    console.log("Unknown error");
+                }
+            }else{
+                console.log('Something went wrong, Please check with your admin');
             }
         });
-        $A.enqueueAction(action);
-    },
-
-    createHeader: function (component, field) {
-        let orderData = field.map(e => {
-            var obj = {};
-            obj['label'] = e['label']
-            obj['fieldPath'] = e['fieldPath']
-            obj['isSortUp'] = true
-            obj['isSortDown'] = false
-            obj['byDefaultSort'] = e['label'] == "Date" ? true : false
-            return obj;
-        })
-        component.set('v.colData', orderData);
-    },
-
-    createRows: function (component, field, row) {
-        let fieldPath = field.map(e => {
-            return e['fieldPath']
-        })
-        component.set('v.fieldPath', fieldPath);
-        component.set('v.allRowData', row);
-        component.set('v.rowData', row.splice(0, component.get('v.prev')));
+        $A.enqueueAction(action);	
     }
 })

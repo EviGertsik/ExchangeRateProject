@@ -1,59 +1,11 @@
-<aura:component controller="DynamicTable" implements="force:appHostable, 
-flexipage:availableForAllPageTypes, flexipage:availableForRecordHome, 
-force:hasRecordId, force:lightningQuickAction" access="global">
+<aura:component implements="flexipage:availableForAllPageTypes" controller="DynamicTable">
+    <aura:attribute name="mydata" type="Object"/>
+    <aura:attribute name="mycolumns" type="List"/>
+ 
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
     
-    <aura:attribute name="object" type="String"/>
-    <aura:attribute name="fieldSetName" type="String"/>
-    <aura:attribute name="colData" type="List"/>
-    <aura:attribute name="fieldPath" type="List"/>
-    <aura:attribute name="rowData" type="List"/>
-    <aura:attribute name="allRowData" type="List"/>
-    <aura:attribute name="next" type="Integer" default="0"/>
-    <aura:attribute name="prev" type="Integer" default="10"/>
-    <aura:handler action="{!c.doInit}" name="init" value="{!this}"/>
-
-    <div>
-        <div class="header">
-            <div class="header_label">
-                <p>{!v.object} Records</p>
-            </div>
-        </div>
-        <table class="slds-table slds-table-bordered slds-table-resizable-cols slds-table_fixed-layout" role="grid">
-            <thead>
-                <tr class="slds-line-height_reset">
-                    <th aria-label="Actions" aria-sort="none" class="slds-is-sortable slds-is-resizable slds-text-title_caps" scope="col" style="width: 6%">
-                        <a class="slds-th__action slds-text-title_reset" href="javascript:void(0);" role="button" tabindex="-1">
-                            <span>
-                                Actions
-                            </span>
-                        </a>
-                    </th>
-                    <aura:iteration items="{!v.colData}" var="obj">
-                        <c:DisplayExchangeRateHeader
-                            colData="{!v.colData}"
-                            col_fieldPath="{!obj.fieldPath}"
-                            rowData="{!v.rowData}"
-                            colName="{!obj.label}"
-                            isSortDown="{!obj.isSortDown}"
-                            isSortUp="{!obj.isSortUp}"
-                            byDefaultSort="{!obj.byDefaultSort}"
-                            />
-                    </aura:iteration>
-                </tr>
-            </thead>
-            <tbody>
-                <aura:iteration items="{!v.rowData}" var="obj">
-                    <tr class="slds-hint-parent">
-                        <td role="gridcell">
-                            <div style="display: flex; justify-content: space-around;">
-                                <div class="slds-truncate" title="Delete" id="{!obj.id}" onclick="{!c.deleteRec}">
-                                   <!-- <lightning:icon -->
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                </aura:iteration>
-            </tbody>
-        </table>
-    </div>
-</aura:component>	
+    <lightning:datatable data="{! v.mydata }" 
+        columns="{! v.mycolumns }" 
+        keyField="Id"/>
+    
+</aura:component>
